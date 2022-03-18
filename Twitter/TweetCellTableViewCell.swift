@@ -40,15 +40,26 @@ class TweetCellTableViewCell: UITableViewCell {
     }
     
     @IBAction func retweet(_ sender: Any) {
-        TwitterAPICaller.client?.reTweet(tweetID: tweetId, success: {
-            self.setRetweeted(true)
-        }, failure: { (error) in
-            print("error in retweeting \(error)")
-        })
+        let tobeRetweeted = !retweeted
+        if(tobeRetweeted) {
+            TwitterAPICaller.client?.reTweet(tweetID: tweetId, success: {
+                self.setRetweeted(true)
+            }, failure: { (error) in
+                print("error in retweeting \(error)")
+            })
+        } else {
+            TwitterAPICaller.client?.unRetweet(tweetID: tweetId, success: {
+                self.setRetweeted(false)
+            }, failure: { (error) in
+                print("error in unretweeting \(error)")
+            })
+        }
+        
     }
     
     func setRetweeted(_ isRetweeted: Bool) {
-        if (isRetweeted) {
+        retweeted = isRetweeted
+        if (retweeted) {
             retweetButton.setImage(UIImage(named: "retweet-icon-green"), for: UIControl.State.normal)
             retweetButton.isEnabled = false
         }
